@@ -54,21 +54,20 @@ void bios_draw(bios *kernel)
 	bios_clearscreen(kernel);
 	// drawing some rectangle lmao
 	if(testimg == NULL)
-	{ 
-		testimg = (eirin*)malloc(sizeof(testimg));
+	{
+		testimg = (eirin*)malloc(sizeof(eirin));
 		eirin_loadimg(testimg,"gfx/testtex.png",EIRIN_PIXELFMT_RGB565);
 	}
 
 	// image dimensions: [$10,$10]
 	// scale dimensions: [$40,$40]
 	FIXED offset = (FIXED)( lu_sin(kernel->time<<10) );
-	FIXED s = inttofixed(8,8) + (offset>>1);
+	FIXED s = inttofixed(8,8) + (offset>>2);
 	FIXED xs = inttofixed(4,8);
-	FIXED ys = kernel->time<<3;
+	FIXED ys = inttofixed(4,8);
 	xs = ys = s;
 	FIXED w = fix_mul2(testimg->w,xs,8);
 	FIXED h = fix_mul2(testimg->h,ys,8);
-	printf("[%04X,%04X]\n",w,h);
 
 	for(u32 ly=0; ly<h; ly++)
 	{
@@ -80,7 +79,7 @@ void bios_draw(bios *kernel)
 			// x would be $40/4, or $10
 			u32 ox = (kernel->w>>1) + lx - (w>>1);
 			u32 oy = (kernel->h>>1) + ly - (h>>1);
-			SDL_Rect drect = { ox,oy,1,1 };
+			SDL_Rect drect = { ox+(ly>>2),oy,1,1 };
 			u32 x = inttofixed(lx,8) / xs;
 			u32 y = inttofixed(ly,8) / ys;
 			SDL_FillRect(kernel->window,&drect,
@@ -88,7 +87,8 @@ void bios_draw(bios *kernel)
 			);
 		}
 	}
-
+	
+	
 }
 
 void bios_clearscreen(bios *kernel)

@@ -21,6 +21,6 @@ int main(void)
 
 void init_eys()
 {
-	eys_bios = new bios;
+	eys_bios = (bios*)malloc(sizeof(bios));
 	bios_init(eys_bios,WIDTH,HEIGHT);
 }
