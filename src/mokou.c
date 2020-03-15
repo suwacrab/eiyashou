@@ -24,13 +24,23 @@ void mokou_spr16(
 	u8 yf = attr.flip>>1;
 	s32 srcW = srcrect.w; s32 srcH = srcrect.h;
 	s32 srcX = srcrect.x; s32 srcY = srcrect.y;
-	s32 start = xf ? (srcX) : 0;
-	for(s32 y=0; y<srcH; y++)
+	s16 dx = (s16)(attr.pos>>8);
+	s16 dy = (s16)(attr.pos&0xFFFF);
+	// if flip, use end of line as start.
+	s32 startX = xf ? (srcX+srcW) : (srcX);
+	s32 startY = yf ? (srcY+srcH) : (srcY);
+	s32 incX = xf ? -1 : 1;
+	s32 incY = yf ? -1 : 1;
+	// if flip, use start of line as end.
+	s32 endX = xf ? (srcX) : (srcX+srcW);
+	s32 endY = yf ? (srcY) : (srcY+srcH);
+
+	for(s32 y=startY; y!=srcH; y += incY)
 	{
-		for(s32 x=0; x<srcW; x++)
+		for(s32 x=startX; x!=srcW; x += incX)
 		{
 			RGB16 pix = mokou_pget16(src,x,y);
-			if(pix!=0) mokou_pset16(dst,x+srcX,y+srcY,pix);
+			if(pix!=0) mokou_pset16(dst,x,y,pix);
 		}
 	}
 }

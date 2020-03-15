@@ -7,7 +7,7 @@ INLINE u32 mokou_sprpos(s16 x,s16 y)
 {
 	return ((u16)(x)<<8) | (u16)(y);
 }
-typedef struct mokou_sprattr { u32 pos; u8 flip; } mokou_sprattr;
+typedef struct mokou_sprattr { u32 pos; u8 flip; u32 sx,sy; } mokou_sprattr;
 
 /*	--	pset functions	--	*/
 extern RGB8 *mokou_pread4(keine* yago,u32 x, u32 y);

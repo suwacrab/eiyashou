@@ -69,6 +69,9 @@ void bios_draw(bios *kernel)
 		SDL_Rect src = { 0,0,16,16 };
 		mokou_sprattr attr = { mokou_sprpos(0,0),0b11 };
 		mokou_spr16(testimg,kernel->fb,src,attr);
+
+		src.x += 0x10; src.y += 0x10;
+		mokou_spr16(testimg,kernel->fb,src,attr);
 	}
 
 	// image dimensions: [$10,$10]
