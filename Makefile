@@ -4,7 +4,7 @@ LIBS = -lm -lSDL -lSDL_image -lSDL_mixer
 INCLUDE = -I. -I./src
 # obj shit
 OBJS := src/main.o src/bios.o src/keine.o src/sinlut.o
-OBJS += src/mokou.o
+OBJS += src/mokou.o src/fade.o
 NAME = build/eiyashou.out
 CPPFLAGS += -g
 

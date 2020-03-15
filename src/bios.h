@@ -6,6 +6,7 @@
 #include "mokou.h"
 #include "kbase.h"
 #include "matrix.h"
+#include "fade.h"
 
 #ifndef BIOS_H
 #define BIOS_H
@@ -20,6 +21,7 @@ typedef struct bios {
 	SDL_Event inpevent; // event for input
 	uint8_t *keystate; // current key state
 	uint32_t time; // time in frames
+	uint32_t lasttick; // last tick
 	bool quit; // quit flag
 } bios;
 
