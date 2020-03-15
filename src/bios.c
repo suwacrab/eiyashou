@@ -81,44 +81,11 @@ void bios_draw(bios *kernel)
 		mokou_spr16(testimg,fb,src,attr);
 	}
 
-	// image dimensions: [$10,$10]
-	// scale dimensions: [$40,$40]
-	FIXED offset = fix_mul(1<<12,lu_sin(kernel->time<<10),12);
-	FIXED s = int2fx(8,12) + offset;
-	FIXED xs = int2fx(4,12);
-	FIXED ys = int2fx(4,12);
-	xs = ys = s;
-	FIXED w = fix_mul2(testimg->w,xs,12);
-	FIXED h = fix_mul2(testimg->h,ys,12);
-
-	/*
-	for(u32 ly=0; ly<h; ly++)
-	{
-		for(u32 lx=0; lx<w; lx++)
-		{
-			// scenario: scale is [4,4] and size is [$20,$10]
-			// now the size is [$80,40] after scaling
-			// also, the pos is [$30,20]
-			// x would be $40/4, or $10
-			u32 ox = (kernel->w>>1) + lx - (w>>1);
-			u32 oy = (kernel->h>>1) + ly - (h>>1);
-			SDL_Rect drect = { ox,oy,1,1 };
-			u32 x = int2fx(lx,12) / xs;
-			u32 y = int2fx(ly,12) / ys;
-			SDL_FillRect(kernel->window,&drect,
-				mokou_pget16(testimg,x,y)
-			);
-		}
-	} */
-
 }
 
 void bios_blitkene(bios *kernel)
 {
 	keine *curfb = kernel->fb;
-	//keine_clear(curfb);
-	mokou_pset16(curfb,32,32,RGB15(31,31,31));
-	//memcpy(kernel->window->pixels,curfb->m,keine_imgsize(curfb));
 	SDL_Rect drect = { 0,0,1,1 };
 	for(u32 y=0; y<curfb->h; y++)
 	{
@@ -127,9 +94,9 @@ void bios_blitkene(bios *kernel)
 		{
 			drect.x = x;
 			u32 px = mokou_pget16(curfb,x,y);
-			u32 r = (px&31)<<3;
-			u32 g = ((px>>5)&31)<<3;
-			u32 b = ((px>>10)&31)<<3;
+			u32 r = (px&31); r <<= 3;
+			u32 g = (px>>5)&31; g <<= 3;
+			u32 b = (px>>10)&31; b <<= 3;
 			SDL_FillRect(kernel->window,&drect,
 				SDL_MapRGB(kernel->window->format,r,g,b)
 			);
@@ -150,15 +117,7 @@ void bios_clearscreen(bios *kernel)
 void bios_flip(bios *kernel)
 {
 	SDL_Flip(kernel->window);
-	uint32_t curtick = SDL_GetTicks();
-	uint32_t fps = 60;
-	// if the last frame was less than a frame ago, wait.
-	if( (curtick - kernel->lasttick) < (1000/fps) )
-	{
-		u32 delay = (curtick - kernel->lasttick);
-		//SDL_Delay(delay);
-	}
-	SDL_Delay( SDL_SECOND/fps );
+	SDL_Delay( SDL_SECOND/50 );
 	kernel->lasttick = SDL_GetTicks();
 	kernel->time++;
 }

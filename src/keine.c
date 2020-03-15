@@ -69,10 +69,10 @@ keine *keine_loadimg(keine *yago,const char *fname,keine_pixelfmt fmt)
 			case KEINE_PIXELFMT_RGB15:
 			{
 				SDL_PixelFormat sdlfmt = {
-					NULL,16,2,
-					3,3,3,0, // loss(rgba)
-					0,5,10,0, // shift (rgba)
-					31,31<<5,31<<10,0, // masks (rgba)
+					NULL,32,4,
+					0,0,0,0, // loss(rgba)
+					0,8,16,24, // shift (rgba)
+					255,255<<8,255<<16,255<<24, // masks (rgba)
 					0,0xFF
 				};
 
@@ -82,13 +82,13 @@ keine *keine_loadimg(keine *yago,const char *fname,keine_pixelfmt fmt)
 				u32 h = convimg->h;
 				keine_init(yago,w,h,fmt);
 
-				u16 *convpix = (u16*)convimg->pixels;
+				u32 *convpix = (u32*)convimg->pixels;
 				u16 *yagopix = (u16*)yago->m;
 				for(u32 i=0; i<(w*h); i++)
 				{ 
 					u8 r,g,b;
 					SDL_GetRGB(convpix[i],&sdlfmt,&r,&g,&b);
-					yagopix[i] = RGB15(r,g,b);
+					yagopix[i] = RGB15(r>>3,g>>3,b>>3);
 				}
 				SDL_FreeSurface(loadimg);
 				SDL_FreeSurface(convimg);

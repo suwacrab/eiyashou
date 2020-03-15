@@ -10,6 +10,7 @@ INLINE u16 BGR565(u32 r,u32 g,u32 b) { return (r<<11) | (g<<5) | b; }
 INLINE u16 RGB565(u32 r,u32 g,u32 b) { return (b<<11) | (g<<5) | r; }
 INLINE u16 RGB15(u32 r,u32 g,u32 b) { return (b<<10) | (g<<5) | r; }
 
+typedef struct RGB24 { u8 r,g,b; } RGB24;
 typedef u16 RGB16;
 typedef u8 RGB8;
 

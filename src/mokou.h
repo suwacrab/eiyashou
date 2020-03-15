@@ -7,7 +7,7 @@ INLINE u32 mokou_sprpos(s32 x,s32 y)
 { return ((u16)(x)<<16) | (u16)(y); }
 // pos split into 2 halfwords,XY
 // flip is 2 bits, XY
-typedef struct mokou_sprattr { u32 pos; u8 flip; u16 fillp; } mokou_sprattr;
+typedef struct mokou_sprattr { u32 pos; u8 flip; u16 fillp; FIXED sx,sy; } mokou_sprattr;
 
 /*	--	pset functions	--	*/
 extern RGB8 *mokou_pread4(keine* yago,u32 x, u32 y);
