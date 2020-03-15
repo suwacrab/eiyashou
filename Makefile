@@ -1,10 +1,11 @@
 # compiler shit
-CC = g++
+CC = gcc
 LIBS = -lm -lSDL -lSDL_image -lSDL_mixer
 INCLUDE = -I. -I./src
 # obj shit
-OBJS := src/main.o src/bios.o src/eirin.o src/sinlut.o
-NAME = eiyashou
+OBJS := src/main.o src/bios.o src/keine.o src/sinlut.o
+OBJS += src/mokou.o
+NAME = build/eiyashou.out
 CPPFLAGS += -g
 
 %.o: %.c %.cpp

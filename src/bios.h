@@ -2,8 +2,10 @@
 #include <SDL/SDL_image.h>
 #include <SDL/SDL_mixer.h>
 #include "sinlut.h"
-#include "eirin.h"
+#include "keine.h"
+#include "mokou.h"
 #include "kbase.h"
+#include "matrix.h"
 
 #ifndef BIOS_H
 #define BIOS_H
@@ -12,12 +14,13 @@
 typedef struct bios {
 	// screen vars
 	SDL_Surface *window;
-	uint32_t w,h;
+	keine *fb; // keine framebuffer
+	uint32_t w,h; // width & height
 	// event vars
-	SDL_Event inpevent;
-	uint8_t *keystate;
-	uint32_t time;
-	bool quit;
+	SDL_Event inpevent; // event for input
+	uint8_t *keystate; // current key state
+	uint32_t time; // time in frames
+	bool quit; // quit flag
 } bios;
 
 /*	--	main funcs	--	*/
@@ -30,6 +33,8 @@ extern void bios_checkquit(bios *kernel);
 
 /*	--	draw functions --	*/
 extern void bios_draw(bios *kernel);
+extern void bios_flip(bios *kernel);
+extern void bios_blitkene(bios *kernel);
 extern void bios_clearscreen(bios *kernel);
 
 #endif

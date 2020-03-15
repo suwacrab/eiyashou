@@ -17,6 +17,12 @@ void bios_init(bios *kernel,u32 w,u32 h)
 	kernel->quit = false;
 	kernel->time = 0;
 	kernel->keystate = SDL_GetKeyState(NULL);
+
+	/*	--	mokokene init	--	*/
+	kernel->fb = malloc(sizeof(keine));
+	keine *fb = kernel->fb;
+	keine_init(fb,w,h,KEINE_PIXELFMT_RGB565);
+	mokou_pset16(fb,32,32,0x1F);
 }
 
 /*	--	update funcs	--	*/
@@ -28,9 +34,8 @@ void bios_boot(bios *kernel)
 		bios_update(kernel);
 		bios_draw(kernel);
 		// vsync
-		SDL_Flip(kernel->window);
-		SDL_Delay( SDL_SECOND/60 );
-		kernel->time++;
+		bios_blitkene(kernel);
+		bios_flip(kernel);
 	}
 }
 
@@ -46,28 +51,35 @@ void bios_checkquit(bios *kernel)
 	kernel->quit = kernel->keystate[SDLK_ESCAPE];
 }
 
-eirin *testimg = NULL;
+keine *testimg = NULL;
 /*	--	draw funcs	--	*/
 void bios_draw(bios *kernel)
 {
 	// clearing
+	keine_clear(kernel->fb);
 	bios_clearscreen(kernel);
 	// drawing some rectangle lmao
 	if(testimg == NULL)
 	{
-		testimg = (eirin*)malloc(sizeof(eirin));
-		eirin_loadimg(testimg,"gfx/testtex.png",EIRIN_PIXELFMT_RGB565);
+		testimg = (keine*)malloc(sizeof(keine));
+		keine_loadimg(testimg,"gfx/testtex.png",KEINE_PIXELFMT_RGB565);
+	}
+	
+	{
+		SDL_Rect src = { 0,0,16,16 };
+		mokou_sprattr attr = { mokou_sprpos(0,0),0b11 };
+		mokou_spr16(testimg,kernel->fb,src,attr);
 	}
 
 	// image dimensions: [$10,$10]
 	// scale dimensions: [$40,$40]
-	FIXED offset = (FIXED)( lu_sin(kernel->time<<10) );
-	FIXED s = inttofixed(8,8) + (offset>>2);
-	FIXED xs = inttofixed(4,8);
-	FIXED ys = inttofixed(4,8);
+	FIXED offset = fix_mul(1<<12,lu_sin(kernel->time<<10),12);
+	FIXED s = int2fx(8,12) + offset;
+	FIXED xs = int2fx(4,12);
+	FIXED ys = int2fx(4,12);
 	xs = ys = s;
-	FIXED w = fix_mul2(testimg->w,xs,8);
-	FIXED h = fix_mul2(testimg->h,ys,8);
+	FIXED w = fix_mul2(testimg->w,xs,12);
+	FIXED h = fix_mul2(testimg->h,ys,12);
 
 	for(u32 ly=0; ly<h; ly++)
 	{
@@ -79,16 +91,32 @@ void bios_draw(bios *kernel)
 			// x would be $40/4, or $10
 			u32 ox = (kernel->w>>1) + lx - (w>>1);
 			u32 oy = (kernel->h>>1) + ly - (h>>1);
-			SDL_Rect drect = { ox+(ly>>2),oy,1,1 };
-			u32 x = inttofixed(lx,8) / xs;
-			u32 y = inttofixed(ly,8) / ys;
+			SDL_Rect drect = { ox,oy,1,1 };
+			u32 x = int2fx(lx,12) / xs;
+			u32 y = int2fx(ly,12) / ys;
 			SDL_FillRect(kernel->window,&drect,
-				((RGB16*)testimg->m)[x + (y*testimg->w)]
+				mokou_pget16(testimg,x,y)
 			);
 		}
 	}
-	
-	
+
+}
+
+void bios_blitkene(bios *kernel)
+{
+	keine *curfb = kernel->fb;
+	SDL_Rect drect = { 0,0,1,1 };
+	for(u32 y=0; y<curfb->h; y++)
+	{
+		drect.y = y;
+		for(u32 x=0; x<curfb->w; x++)
+		{
+			drect.x = x;
+			SDL_FillRect(kernel->window,&drect,
+				mokou_pget16(curfb,x,y)
+			);
+		}
+	}
 }
 
 void bios_clearscreen(bios *kernel)
@@ -100,3 +128,11 @@ void bios_clearscreen(bios *kernel)
 		SDL_MapRGB(window->format,0,0,0)
 	);
 }
+
+void bios_flip(bios *kernel)
+{
+	SDL_Flip(kernel->window);
+	SDL_Delay( SDL_SECOND/60 );
+	kernel->time++;
+}
+

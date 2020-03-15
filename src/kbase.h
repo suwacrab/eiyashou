@@ -81,8 +81,8 @@ INLINE void str_lower(char *str,u32 len)
 /*	--	fixed-point types	--	*/
 typedef s32 FIXED;
 
-#define inttofixed(n,s) ((n)<<(s))
-#define fixedtoint(n,s) ((n)>>(s))
+INLINE FIXED int2fx(FIXED n,FIXED s) { return n<<s; }
+INLINE FIXED fx2int(FIXED n,FIXED s) { return n>>s; }
 INLINE FIXED fix_mul(FIXED a,FIXED b,u32 dec)
 { return (a>>(dec>>1)) * (b>>(dec>>1)); }
 INLINE FIXED fix_mul2(FIXED a,FIXED b,u32 dec)
@@ -97,6 +97,17 @@ INLINE void vec3_set(VEC3 *a,s32 x,s32 y,s32 z)
 { a->x = x; a->y = y; a->z = z; }
 INLINE void vec2_set(VEC2 *a,s32 x,s32 y)
 { a->x = x; a->y = y; }
+
+// -- shifting
+INLINE void vec3_shr(VEC3 *a,u32 s)
+{ a->x >>= s; a->y >>= s; a->z >>= s; }
+INLINE void vec2_shr(VEC2 *a,u32 s)
+{ a->x >>= s; a->y >>= s; } 
+
+INLINE void vec3_shl(VEC3 *a,u32 s)
+{ a->x <<= s; a->y <<= s; a->z <<= s; }
+INLINE void vec2_shl(VEC2 *a,u32 s)
+{ a->x <<= s; a->y <<= s; }
 
 // -- adding
 INLINE void vec3_add(VEC3 *a,VEC3 *b)
